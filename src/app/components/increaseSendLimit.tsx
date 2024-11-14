@@ -5,9 +5,10 @@ import { increaseSendLimit } from '../lib/actions';
 import { redirect } from 'next/navigation';
 import { useActionState } from 'react';
 import Loader from './ui/loader';
+import { useFormState } from 'react-dom';
 
 export default function IncreaseSendLimits() {
-  const [state, formAction,isLoading] = useActionState<any, FormData>(increaseSendLimit, undefined);
+  const [state, formAction,isLoading] = useFormState<any, FormData>(increaseSendLimit, undefined);
   const [showMessage, setShowMessage] = useState<boolean>(false);
 
   // Reset form and trigger the message display logic after form submission

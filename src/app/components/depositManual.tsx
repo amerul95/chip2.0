@@ -7,10 +7,11 @@ import { useForm } from "@conform-to/react";
 import { parseWithZod } from "@conform-to/zod";
 import { createPurchase } from "../schema/zodSchema";
 import { redirect } from "next/navigation";
+import { useFormState } from "react-dom";
 
 
 export default function DepositManual() {
-  const [lastResult, formAction] = useActionState<any, FormData>(chipCollect, undefined);
+  const [lastResult, formAction] = useFormState<any, FormData>(chipCollect, undefined);
   const [showMessage, setShowMessage] = useState<boolean>(false);
   const [form,fields] = useForm({
     lastResult,

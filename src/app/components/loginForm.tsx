@@ -5,10 +5,11 @@ import { useActionState } from "react";
 import { useEffect, useState } from "react";
 import useSWR from "swr";
 import Loader from "./ui/loader";
+import { useFormState } from "react-dom";
 
 
 export  function LoginForm() {
-  const [state, formAction,isLoading] = useActionState<any, FormData>(loginUser, undefined);
+  const [state, formAction,isLoading] = useFormState<any, FormData>(loginUser, undefined);
   const [showError, setShowError] = useState(false);
   const [ipAddress, setIpAddress] = useState<string | undefined>(undefined);
   const [location, setLocation] = useState<string | undefined>(undefined);
