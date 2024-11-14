@@ -11,20 +11,9 @@ import { useFormState } from "react-dom";
 export  function LoginForm() {
   const [state, formAction,isLoading] = useFormState<any, FormData>(loginUser, undefined);
   const [showError, setShowError] = useState(false);
-  const [ipAddress, setIpAddress] = useState<string | undefined>(undefined);
-  const [location, setLocation] = useState<string | undefined>(undefined);
-
-  const fetcher = (url:string) => fetch(url).then(res => res.json())
-  const {data,error} = useSWR('https://ipapi.co/json/',fetcher)
 
 
-  useEffect(() => {
-    // Ensure that IP and location are set after data is fetched
-    if (data) {
-      setIpAddress(data.ip); 
-      setLocation(`${data.postal}, ${data.city}, ${data.country_capital}, ${data.asn}`); // Set location string
-    }
-  }, [data]);
+
 
   // Show error for 2 seconds when there's an error
   useEffect(() => {
@@ -70,19 +59,7 @@ export  function LoginForm() {
                   placeholder="username"
                   required
                 />
-                <input 
-                  type="text"
-                  name="ipaddress"
-                  id="ipaddress"
-                  hidden
-                  defaultValue={ipAddress}/>
-                  
-                <input 
-                  type="text"
-                  name="location"
-                  id="location"
-                  hidden
-                  defaultValue={location} />
+
               </div>
               <div>
                 <label
