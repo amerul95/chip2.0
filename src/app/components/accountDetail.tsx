@@ -1,9 +1,9 @@
 "use client";
 
 import React, { useEffect, useState } from "react";
-import { allAccountsSend } from "../lib/actions"; // Assuming this is the correct import path
+// Assuming this is the correct import path
 
-interface DetailAccount {
+export interface DetailAccount {
   status: string;
   currency: string;
   send_fee_type: string;
@@ -14,10 +14,22 @@ interface DetailAccount {
   created_at: string;
   updated_at: string;
 }
+type Props = {
+  result:DetailAccount[]
+}
 
-export default function AccountDetail() {
+export default function AccountDetail(result:Props) {
   const [accounts, setAccounts] = useState<DetailAccount[] | null>(null); // State to hold the account data
   const [loading, setLoading] = useState<boolean>(true); // State for loading
+
+  useEffect(() => {
+    if (result.result && result.result.length > 0) {
+      setAccounts(result.result);
+      setLoading(false);
+    } else {
+      setLoading(false);
+    }
+  }, [result.result]);
 
   const formatDate = (dateString: string) => {
     const date = new Date(dateString);
@@ -34,28 +46,14 @@ export default function AccountDetail() {
   };
 
 
-  useEffect(() => {
-    // Using an async function inside useEffect to fetch data
-    const fetchAccounts = async () => {
-      try {
-        const result: DetailAccount[] = await allAccountsSend();
-        setAccounts(result); // Update state with fetched data
-      } catch (error) {
-        console.error("Failed to fetch account details", error);
-      } finally {
-        setLoading(false); // Set loading to false once data is fetched
-      }
-    };
 
-    fetchAccounts(); // Call the async function
-  }, []);
 
   if (loading) {
-    return <p>Loading...</p>; // Show a loading state while fetching data
+    return <p className="text-white">Loading...</p>; // Show a loading state while fetching data
   }
 
-  if (!accounts) {
-    return <p>No account details available.</p>; // Handle case where no data is fetched
+  if (!accounts || accounts.length === 0) {
+    return <p className="text-white">No account details available.</p>; // Handle case where no data is fetched
   }
 
   return (

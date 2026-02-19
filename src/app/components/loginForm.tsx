@@ -1,15 +1,18 @@
 "use client";
 
 import { loginUser } from "./../lib/loginUser";
-import { useActionState } from "react";
 import { useEffect, useState } from "react";
-import useSWR from "swr";
 import Loader from "./ui/loader";
 import { useFormState } from "react-dom";
 
+type LoginState = {
+  ok:boolean
+  message: string | null,
+}
 
 export  function LoginForm() {
-  const [state, formAction,isLoading] = useFormState<any, FormData>(loginUser, undefined);
+  const initialState:LoginState = {ok:true,message:null}
+  const [state, formAction,isLoading] = useFormState<LoginState, FormData>(loginUser, initialState);
   const [showError, setShowError] = useState(false);
 
 
@@ -18,7 +21,7 @@ export  function LoginForm() {
   // Show error for 2 seconds when there's an error
   useEffect(() => {
 
-    if (state?.error) {
+    if (state?.message) {
       setShowError(true);
       const timer = setTimeout(() => {
         setShowError(false);
@@ -27,7 +30,7 @@ export  function LoginForm() {
       // Clear timeout when component unmounts or error changes
       return () => clearTimeout(timer);
     }
-  }, [state?.error]);
+  }, [state?.message]);
 
   return (
     <>
@@ -83,7 +86,7 @@ export  function LoginForm() {
               >
                 Sign in
               </button>
-              {showError && <p className="text-red-500">{state.error}</p>}
+              {showError && <p className="text-red-500">{state.message}</p>}
             </form>
           </div>
         </div>

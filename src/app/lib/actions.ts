@@ -2,11 +2,38 @@
 import crypto from 'crypto';
 import { getSession } from './session';
 import prisma from "@/app/lib/prisma";
+import type { DetailAccount } from '../components/accountDetail';
+import { ok } from 'assert';
+
+export type ActionResult<T>= 
+  | { ok: true; data: T }
+  | { ok: false; error: string };
+
+type GenerateSuccess = {
+  ok:true
+  epochSecs: number;
+  checksum: string;
+  domain: string;
+  apiKey: string;
+}
 
 
-const generateAllCre = (): { epochSecs: number, checksum: string, domain: string, apiKey: string } => {
+type GenerateError = {
+  ok: false;
+  error: string;
+};
+
+type GenerateResult = GenerateSuccess | GenerateError;
+
+
+const generateAllCre = (): GenerateResult => {
+  // try {
+    
+  // } catch (error) {
+    
+  // }
   // Helper function to generate checksum
-  const generateChecksum = (apiKey: string, apiSecret: string): { epochSecs: number, checksum: string } => {
+  const generateChecksum = (apiKey: string, apiSecret: string) => {
     const epoch = new Date().getTime();
     const epochSecs = Math.floor(epoch / 1000);
 
@@ -19,26 +46,28 @@ const generateAllCre = (): { epochSecs: number, checksum: string, domain: string
   };
 
   // Example usage in your Next.js component or API route
-  const apiKey = process.env.NEXT_PUBLIC_API_KEY as string
-  const apiSecret = process.env.NEXT_PUBLIC_API_SECRET as string
+  const apiKey = process.env.NEXT_PUBLIC_API_KEY 
+  const apiSecret = process.env.NEXT_PUBLIC_API_SECRET 
 
   if (!apiKey || !apiSecret) {
-    console.log(process.env.NEXT_PUBLIC_TEST)
-    throw new Error("API Key or Secret is missing from environment variables.");
+    return {ok:false,error:"Env API is not defined"}
   }
 
   const { epochSecs, checksum } = generateChecksum(apiKey, apiSecret);
   const domain = 'https://api.chip-in.asia/api/';
 
   // Return both values as an object
-  return { epochSecs, checksum, domain, apiKey };
+  return { ok:true,epochSecs, checksum, domain, apiKey };
 };
 
 
 
-const allAccountsSend = async () => {
-    const {epochSecs,checksum,domain,apiKey} = generateAllCre()
-
+const allAccountsSend = async ():Promise<ActionResult<any[]>>=> {
+    const cre = generateAllCre() 
+    if(!cre.ok){
+      return {ok:false,error:cre.error}
+    }
+      const { epochSecs, checksum, domain, apiKey } = cre;
 
     try {
         const response = await fetch(`${domain}send/accounts`,{
@@ -52,18 +81,26 @@ const allAccountsSend = async () => {
 
         if(!response.ok){
             console.log('faile to fetch list accounts')
+            return {ok:false,error:"'faile to fetch list accounts'"}
         }
+        const json = await response.json()
+        return {ok:true,data:json.results ?? []}
 
-        const listAccounts = await response.json()
-        return listAccounts.results
 
     } catch (error) {
+      const msg = error instanceof Error ? error.message :"Server error"
         console.log('error fetching')
+        return {ok:false,error:msg}
     }
 }
-const allSendLimit = async () => {
-    const {epochSecs,checksum,domain,apiKey} = generateAllCre()
 
+const allSendLimit = async ():Promise<ActionResult<any[]>> => {
+
+    const cre = generateAllCre()
+    if(!cre.ok){
+      return {ok:false,error:"failed to send limit"}
+    }
+     const { epochSecs, checksum, domain, apiKey } = cre;
 
     try {
         const response = await fetch(`${domain}send/send_limits`,{
@@ -77,20 +114,27 @@ const allSendLimit = async () => {
 
         if(!response.ok){
             console.log('faile to fetch list all send limits')
+            return {ok:false,error:"faile to fetch list all send limits"}
         }
 
         const listAccounts = await response.json()
-        return listAccounts.results
+        return {ok:true,data:listAccounts.results}
 
     } catch (error) {
         console.log('error fetching')
+        const mes = error instanceof Error ? error.message : "server error"
+        return {ok:false,error:mes}
     }
 }
 
 
 
-const allBankAcoount = async (id:string) => {
-  const {epochSecs,checksum,domain,apiKey} = generateAllCre()
+const allBankAcoount = async (id:string):Promise<ActionResult<any[]>> => {
+  const cre = generateAllCre()
+  if(!cre.ok){
+    return {ok:false,error:cre.error}
+  }
+  const { epochSecs, checksum, domain, apiKey } = cre;
 
   try {
       const response = await fetch(`${domain}send/bank_accounts?page=${id}`,{
@@ -105,17 +149,24 @@ const allBankAcoount = async (id:string) => {
 
       if(!response.ok){
           console.log('faile to fetch list all bank account')
+          return {ok:false,error:"faile to fetch list all bank account"}
       }
 
       const listAccounts = await response.json()
-      return listAccounts
+      return {ok:true,data:listAccounts}
 
   } catch (error) {
       console.log('error fetching')
+      const mes = error instanceof Error ? error.message : "server error"
+      return {ok:false,error:mes}
   }
 }
-const bankAcoountbyId = async (id:string) => {
-  const {epochSecs,checksum,domain,apiKey} = generateAllCre()
+const bankAcoountbyId = async (id:string):Promise<ActionResult<any[]>> => {
+  const cre = generateAllCre()
+  if(!cre.ok){
+    return {ok:false,error:cre.error}
+  }
+  const { epochSecs, checksum, domain, apiKey } = cre;
 
 
   try {
@@ -133,14 +184,20 @@ const bankAcoountbyId = async (id:string) => {
       }
 
       const listAccounts = await response.json()
-      return listAccounts
+      return {ok:true,data:listAccounts}
 
   } catch (error) {
       console.log('error fetching')
+      const mes = error instanceof Error ? error.message : "server error"
+      return {ok:false,error:mes}
   }
 }
-const allInstructionsList = async (id:string) => {
-  const {epochSecs,checksum,domain,apiKey} = generateAllCre()
+const allInstructionsList = async (id:string):Promise<ActionResult<any[]>> => {
+  const cre = generateAllCre()
+  if(!cre.ok){
+    return {ok:false,error:cre.error}
+  }
+  const { epochSecs, checksum, domain, apiKey } = cre;
 
   try {
       const response = await fetch(`${domain}send/send_instructions?page=${id}`,{
@@ -154,19 +211,26 @@ const allInstructionsList = async (id:string) => {
 
       if(!response.ok){
           console.log('faile to fetch send instructions')
+          return {ok:false,error:"faile to fetch send instructions"}
       }
 
       const listAccounts = await response.json()
-      return {data:listAccounts}
+      return {ok:true,data:listAccounts}
 
   } catch (error) {
       console.log('error fetching')
+      const mes = error instanceof Error ? error.message : "server error"
+      return {ok:false,error:mes}
   }
 }
 
 
-const instructionbyId = async (id:string) => {
-    const {epochSecs,checksum,domain,apiKey} = generateAllCre()
+const instructionbyId = async (id:string):Promise<ActionResult<any[]>> => {
+  const cre = generateAllCre()
+  if(!cre.ok){
+    return {ok:false,error:cre.error}
+  }
+  const { epochSecs, checksum, domain, apiKey } = cre;
 
   
     try {
@@ -184,17 +248,19 @@ const instructionbyId = async (id:string) => {
         }
   
         const listAccounts = await response.json()
-        return listAccounts
+        return {ok:true,data:listAccounts}
   
     } catch (error) {
         console.log('error fetching')
+        const mes = error instanceof Error ? error.message : "server error"
+        return {ok:false,error:mes}
     }
   }
 
   const createBankAccount = async (
     prevState:{error:undefined | string},
     formData:FormData
-  ) => {
+  ):Promise<ActionResult<any[]> | undefined> => {
 
     const reqBody = JSON.stringify({
         account_number: formData.get('account_number'),
@@ -203,7 +269,11 @@ const instructionbyId = async (id:string) => {
         refrence: formData.get('refrence'),
     })
 
-    const {epochSecs,checksum,domain,apiKey} = generateAllCre()
+    const cre = generateAllCre()
+    if(!cre.ok){
+      return {ok:false,error:cre.error}
+    }
+    const { epochSecs, checksum, domain, apiKey } = cre;
     try {
         const response = await fetch(`${domain}send/bank_accounts`,{
             method: 'POST',
@@ -218,11 +288,11 @@ const instructionbyId = async (id:string) => {
         const data = await response.json()
 
         if(!response.ok){
-            return{success:false,message:data.message}
+            return{ok:false,error:data.message}
         }
 
         console.log(data)
-        return {success:true,message:data.message}
+        return {ok:true,data:data.message}
 
         
     } catch (error) {
@@ -260,7 +330,11 @@ const instructionbyId = async (id:string) => {
     prevState:{data:undefined | string},
     formData: FormData
 ) => {
-  const {epochSecs,checksum,domain,apiKey} = generateAllCre()
+  const cre = generateAllCre()
+  if(!cre.ok){
+    return {ok:false,error:cre.error}
+  }
+  const { epochSecs, checksum, domain, apiKey } = cre;
   const session = await getSession()
   const date = new Date().toISOString();
 
@@ -323,7 +397,11 @@ const createNewInstruction = async (
     prevState:{error:undefined | string},
     formData: FormData
 ) => {
-  const {epochSecs,checksum,domain,apiKey} = generateAllCre()
+  const cre = generateAllCre()
+  if(!cre.ok){
+    return {ok:false,error:cre.error}
+  }
+  const { epochSecs, checksum, domain, apiKey } = cre;
 
   const reqBody = JSON.stringify({
     bank_account_id:formData.get('bank_account_id'),

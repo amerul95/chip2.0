@@ -47,6 +47,7 @@ export default function InstructionList() {
   const [currentPage, setCurrentPage] = useState<any>(1);
   const [totalPages, setTotalPages] = useState<any>(1);
   const [show,setShow] = useState(false)
+  const [error, setError] = useState<string | null>(null);
 
 
   // State to manage sorting
@@ -61,9 +62,16 @@ export default function InstructionList() {
   // Fetch instructions data
   useEffect(() => {
     const fetchInstructions = async () => {
-      const allInstructionsLists : any = await allInstructionsList(currentPage);
-      setInstructions(allInstructionsLists.data.results);
-      setTotalPages(allInstructionsLists.data.meta.pagination.total_pages);
+      const result = await allInstructionsList(currentPage);
+      if (result.ok) {
+        setInstructions(result.data.results);
+        setTotalPages(result.data.meta.pagination.total_pages);
+        setError(null);
+      } else {
+        setError(result.error);
+        setInstructions([]);
+        setTotalPages(1);
+      }
     };
 
     fetchInstructions();
@@ -114,6 +122,11 @@ export default function InstructionList() {
 
   return (
     <>
+    {error && (
+      <div className="p-4 mb-4">
+        <p className="text-red-500 text-lg font-semibold">{error}</p>
+      </div>
+    )}
     <div className="flex gap-2">
     <div className="pl-4 flex gap-3 relative">
       <button onClick={()=>{handlerShow()}} className="text-black hover:underline bg-white px-2 rounded-lg space-x-2">Specific Transaction

@@ -15,6 +15,7 @@ interface AllSendLimit {
 
 export default function IncreaseLimitHistory() {
   const [result, setResult] = useState<AllSendLimit[]>([]);
+  const [error, setError] = useState<string | null>(null);
   const [sortConfig, setSortConfig] = useState<{
     key: keyof AllSendLimit | null;
     direction: string;
@@ -40,8 +41,14 @@ export default function IncreaseLimitHistory() {
   // Fetch data and set state
   useEffect(() => {
     const fetchData = async () => {
-      const result: AllSendLimit[] = await allSendLimit();
-      setResult(result);
+      const response = await allSendLimit();
+      if (response.ok) {
+        setResult(response.data);
+        setError(null);
+      } else {
+        setError(response.error);
+        setResult([]);
+      }
     };
     fetchData();
   }, []);
@@ -84,6 +91,11 @@ export default function IncreaseLimitHistory() {
 
   return (
     <div className='p-4'>
+      {error && (
+        <div className="mb-4">
+          <p className="text-red-500 text-lg font-semibold">{error}</p>
+        </div>
+      )}
       <div className='bg-white shadow rounded-md overflow-hidden'>
         <div className="overflow-x-auto">
           <table className='min-w-full bg-white'>

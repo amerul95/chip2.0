@@ -37,12 +37,20 @@ export default function BankAccount({session}:any) {
   const [data,setData] = useState<any[]>([])
   const [currentPage, setCurrentPage] = useState<any>(1);
   const [totalPages, setTotalPages] = useState<any>(1);
+  const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
     const fetchInstructions = async () => {
-      const allBankAccount : any = await allBankAcoount(currentPage);
-      setData(allBankAccount.results);
-      setTotalPages(allBankAccount.meta.pagination.total_pages);
+      const result = await allBankAcoount(currentPage);
+      if (result.ok) {
+        setData(result.data.results);
+        setTotalPages(result.data.meta.pagination.total_pages);
+        setError(null);
+      } else {
+        setError(result.error);
+        setData([]);
+        setTotalPages(1);
+      }
     };
 
     fetchInstructions();
@@ -56,7 +64,11 @@ export default function BankAccount({session}:any) {
   return (
     <>
     <CreateNew/>
-
+    {error && (
+      <div className="p-4">
+        <p className="text-red-500 text-lg font-semibold">{error}</p>
+      </div>
+    )}
     <div className='p-4'>
       <div className='bg-white shadow rounded-md overflow-x-auto'>
         <table className='min-w-full bg-gray-800 table-auto'>

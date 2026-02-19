@@ -11,6 +11,9 @@ type User = {
   isAdmin: boolean;
 };
 
+type LoginState =  {ok:boolean,message:string | null}
+
+
 const users: User[] = [
   {
     id: '1',
@@ -29,23 +32,24 @@ const users: User[] = [
 ];
 
 export const loginUser = async (
-  prevState:{error:undefined | string},
+  prevState:LoginState,
   formData: FormData
-)=> {
-  const session = await getSession();
-  
+):Promise<LoginState>=> {
+    const session = await getSession();
   const formUsername = formData.get("username") as string;
   const formPassword = formData.get("password") as string;
 
-  // Find the user by their username or email
+  // Find the user by their username 
   const user = users.find(
     (user) => user.name === formUsername && user.password === formPassword
   );
 
   if (!user) {
     console.log("user not found")
-    return { success: false, message: "Wrong credentials",error:"wrong credentials" };
+    return { ok: false, message: "Wrong credentials"};
   }
+
+
 
   // Set session properties
   session.userId = user.id;
@@ -66,5 +70,6 @@ export const loginUser = async (
 export const logOut = async () =>{
   const session = await getSession()
   session.destroy();
+  await session.save()
   redirect("/")
 }

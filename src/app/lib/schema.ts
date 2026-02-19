@@ -1,4 +1,10 @@
 import { SessionOptions } from "iron-session"
+
+const password = process.env.AUTH_SECRET;
+
+if (!password) {
+  throw new Error("AUTH_SECRET is missing. Add it to .env.local and restart the server.");
+}
 export interface SessionData {
   userId?: string,
   username?: string,
@@ -10,6 +16,7 @@ export interface SessionData {
 }
 
 export const sessionOptions : SessionOptions = {
+
   password: process.env.AUTH_SECRET!,
   cookieName: "client-session",
   cookieOptions:{
