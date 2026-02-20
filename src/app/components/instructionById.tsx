@@ -23,8 +23,19 @@ interface AccountDetails {
 }
 
 export default async function InstructionById({ params }: any) {
-  const id = await params
-  const response: AccountDetails = await instructionbyId(id);
+  const resolvedParams = await params;
+  const id = typeof resolvedParams === 'object' && 'id' in resolvedParams ? resolvedParams.id : resolvedParams;
+  const result = await instructionbyId(id);
+
+  if (!result.ok) {
+    return (
+      <div className="p-4">
+        <p className="text-red-500 text-lg font-semibold">{result.error}</p>
+      </div>
+    );
+  }
+
+  const response = result.data as unknown as AccountDetails;
 
   return (
     <div className="p-4">

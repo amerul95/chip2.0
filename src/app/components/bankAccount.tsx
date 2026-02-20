@@ -4,7 +4,6 @@ import React,{useState,useEffect} from 'react';
 import { allBankAcoount } from '../lib/actions';
 import Link from 'next/link';
 import CreateNew from './ui/createNew';
-import { getSession } from '../lib/session';
 
 interface BankDetails {
   id: number;
@@ -43,8 +42,9 @@ export default function BankAccount({session}:any) {
     const fetchInstructions = async () => {
       const result = await allBankAcoount(currentPage);
       if (result.ok) {
-        setData(result.data.results);
-        setTotalPages(result.data.meta.pagination.total_pages);
+        const data = result.data as unknown as { results: any[]; meta: { pagination: { total_pages: number } } };
+        setData(data.results);
+        setTotalPages(data.meta.pagination.total_pages);
         setError(null);
       } else {
         setError(result.error);

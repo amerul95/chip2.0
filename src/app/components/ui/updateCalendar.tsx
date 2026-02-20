@@ -101,3 +101,7 @@
 // };
 
 // export default UpdateCalendar;
+
+export default function UpdateCalendar() {
+  return null;
+}

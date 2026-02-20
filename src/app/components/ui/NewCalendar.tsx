@@ -92,3 +92,7 @@
 
 //   );
 // }
+
+export default function NewCalendar() {
+  return null;
+}

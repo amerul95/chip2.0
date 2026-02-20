@@ -2,7 +2,6 @@
 
 import React, { useState,useEffect } from "react";
 import { chipCollect } from "../lib/actiondeposit";
-import { useActionState } from "react";
 import { useForm } from "@conform-to/react";
 import { parseWithZod } from "@conform-to/zod";
 import { createPurchase } from "../schema/zodSchema";
@@ -12,7 +11,7 @@ import { useFormState } from "react-dom";
 
 export default function DepositManual() {
   const [lastResult, formAction] = useFormState<any, FormData>(chipCollect, undefined);
-  const [showMessage, setShowMessage] = useState<boolean>(false);
+  const [, setShowMessage] = useState<boolean>(false);
   const [form,fields] = useForm({
     lastResult,
     onValidate({formData}){

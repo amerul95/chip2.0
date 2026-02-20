@@ -3,13 +3,12 @@
 import React, { useEffect, useState } from 'react';
 import { increaseSendLimit } from '../lib/actions';
 import { redirect } from 'next/navigation';
-import { useActionState } from 'react';
 import Loader from './ui/loader';
 import { useFormState } from 'react-dom';
 
 export default function IncreaseSendLimits() {
   const [state, formAction,isLoading] = useFormState<any, FormData>(increaseSendLimit, undefined);
-  const [showMessage, setShowMessage] = useState<boolean>(false);
+  const [, setShowMessage] = useState<boolean>(false);
 
   // Reset form and trigger the message display logic after form submission
   useEffect(() => {
@@ -28,15 +27,6 @@ export default function IncreaseSendLimits() {
   if(state?.success == true){
     return redirect('/dashboard/send-limit-history')
   }
-   async function getIp(){
-    const ipresponse = await fetch('/dashboard/send-limit-history/api/getapi',{
-      method:'GET',
-      headers:{
-        'accept':'application/json'
-      }
-    })
-  }
-
   return (
 
     <>

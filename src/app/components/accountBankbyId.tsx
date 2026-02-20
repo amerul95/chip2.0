@@ -26,7 +26,17 @@ export default async function AccountBankbyId({ params }: any) {
         return date.toLocaleString('en-US', options);
     };
 
-    const response: AccountDetails = await bankAcoountbyId(params);
+    const result = await bankAcoountbyId(params);
+
+    if (!result.ok) {
+        return (
+            <div className="p-4">
+                <p className="text-red-500 text-lg font-semibold">{result.error}</p>
+            </div>
+        );
+    }
+
+    const response = result.data as unknown as AccountDetails;
 
     return (
         <div className="p-4">

@@ -64,8 +64,9 @@ export default function InstructionList() {
     const fetchInstructions = async () => {
       const result = await allInstructionsList(currentPage);
       if (result.ok) {
-        setInstructions(result.data.results);
-        setTotalPages(result.data.meta.pagination.total_pages);
+        const data = result.data as unknown as { results: InstructionDetails[]; meta: { pagination: { total_pages: number } } };
+        setInstructions(data.results);
+        setTotalPages(data.meta.pagination.total_pages);
         setError(null);
       } else {
         setError(result.error);

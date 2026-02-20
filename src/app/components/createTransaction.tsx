@@ -2,12 +2,12 @@
 
 import React, { useEffect, useState } from 'react';
 import { createNewInstruction } from '../lib/actions';
-import { useActionState } from 'react';
+import { useFormState } from 'react-dom';
 
 
 export default function CreateTransaction({params}:any) {
 
-  const [state, formAction] = useActionState<any, FormData>(createNewInstruction, undefined);
+  const [state, formAction] = useFormState<any, FormData>(createNewInstruction, undefined);
   const [showMessage, setShowMessage] = useState<boolean | undefined>(undefined);
 
   console.log(params)

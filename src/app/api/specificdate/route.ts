@@ -4,7 +4,11 @@ import * as XLSX from "xlsx";
 import { generateAllCre } from "@/app/lib/actions";
 
 export async function POST(req: Request) {
-  const { epochSecs, checksum, domain, apiKey } = generateAllCre();
+  const cre = generateAllCre();
+  if (!cre.ok) {
+    return NextResponse.json({ success: false, message: cre.error }, { status: 500 });
+  }
+  const { epochSecs, checksum, domain, apiKey } = cre;
 
   function formatDate(time: string) {
     const date = new Date(time);
