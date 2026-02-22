@@ -1,36 +1,150 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# Chip2.0
+
+A Next.js dashboard application that integrates with the **Chip-in.asia API** to manage payment instructions, bank accounts, send limits, and manual deposits (payin). The app provides a secure, session-based interface for viewing accounts, creating transactions, and exporting data.
+
+## What This App Does
+
+- **Authentication** — Session-based login with iron-session; protected dashboard routes
+- **Send Accounts** — View Chip-in send accounts, balances, and details
+- **Transactions (Instructions)** — List send instructions with pagination, sorting, and CSV/XLSX export
+- **Bank Accounts** — Manage bank accounts linked to Chip-in; create new bank accounts and payout transactions
+- **Send Limits** — Request send limit increases; view send limit history
+- **Payin** — Create manual deposits/purchases via Chip-in API (redirects to success/failure pages)
+- **Activity Log** — View user activity logs stored in MySQL (via Prisma)
+
+## Tech Stack
+
+- **Framework:** Next.js 14 (App Router)
+- **Language:** TypeScript
+- **Styling:** Tailwind CSS
+- **Database:** MySQL with Prisma ORM
+- **Auth:** iron-session (server-side sessions)
+- **Validation:** Zod, Conform
+- **Export:** xlsx for CSV/Excel downloads
+
+## Project Structure
+
+```
+src/
+├── app/
+│   ├── page.tsx                 # Home (Login link)
+│   ├── layout.tsx               # Root layout
+│   ├── login/                   # Login page
+│   │   └── page.tsx
+│   ├── dashboard/               # Protected dashboard (requires auth)
+│   │   ├── layout.tsx           # Dashboard layout (Navbar)
+│   │   ├── page.tsx             # Send accounts overview
+│   │   ├── transaction/         # Send instructions list
+│   │   │   ├── page.tsx
+│   │   │   └── [id]/page.tsx    # Instruction detail
+│   │   ├── bank-account/        # Bank accounts
+│   │   │   ├── page.tsx
+│   │   │   ├── create-accountbank/page.tsx
+│   │   │   └── [id]/           # Bank account detail + create transaction
+│   │   ├── send-limit/          # Increase send limit form
+│   │   │   └── page.tsx
+│   │   ├── send-limit-history/  # Send limit history + log
+│   │   │   ├── page.tsx
+│   │   │   ├── [id]/page.tsx
+│   │   │   └── log/page.tsx     # Activity log (Prisma)
+│   │   ├── payin/               # Manual deposit (Chip purchase)
+│   │   │   └── page.tsx
+│   │   ├── processing/          # Payin success redirect
+│   │   ├── processing-failed/   # Payin failure redirect
+│   │   └── test/page.tsx
+│   ├── api/                     # API routes
+│   │   ├── allrangedate/        # GET - Export all instructions as XLSX
+│   │   ├── specificdate/        # POST - Export instructions by date range
+│   │   ├── prismadb/            # Prisma CRUD (list, update)
+│   │   └── getapi/
+│   ├── components/              # Reusable components
+│   │   ├── accountDetail.tsx    # Send account details
+│   │   ├── bankAccount.tsx      # Bank account list
+│   │   ├── instructionList.tsx  # Instruction list
+│   │   ├── instructionById.tsx  # Instruction detail
+│   │   ├── increaseSendLimit.tsx
+│   │   ├── increaseLimitHistory.tsx
+│   │   ├── depositManual.tsx    # Payin form
+│   │   ├── createAccountBank.tsx
+│   │   ├── createTransaction.tsx
+│   │   ├── loginForm.tsx
+│   │   ├── Logtable.tsx
+│   │   └── ui/                  # Navbar, Loader, etc.
+│   ├── lib/
+│   │   ├── actions.ts           # Server actions (Chip-in API calls)
+│   │   ├── actiondeposit.ts     # Payin server action
+│   │   ├── session.ts           # Session utilities
+│   │   ├── loginUser.ts
+│   │   ├── schema.ts            # Auth schema
+│   │   ├── prisma.ts            # Prisma client
+│   │   └── zodSchema.ts         # Zod schemas
+│   └── schema/
+│       └── zodSchema.ts
+├── middleware.ts                # Auth protection for /dashboard
+prisma/
+└── schema.prisma                # User model (activity logs)
+```
+
+## Environment Variables
+
+Create a `.env` file with:
+
+| Variable | Description |
+|----------|-------------|
+| `DATABASE_URL` | MySQL connection string for Prisma |
+| `AUTH_SECRET` | Secret for iron-session encryption |
+| `NEXT_PUBLIC_API_KEY` | Chip-in.asia API key |
+| `NEXT_PUBLIC_API_SECRET` | Chip-in.asia API secret (for checksum) |
+| `API_SECRET_KEY` | Chip-in API secret for payin (gate API) |
+| `BRAND_ID` | Chip-in brand ID for payin |
 
 ## Getting Started
 
-First, run the development server:
+1. **Install dependencies**
 
-```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
-```
+   ```bash
+   npm install
+   ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+2. **Set up environment**
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+   Copy `.env.example` to `.env` (or create `.env`) and fill in the required variables.
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+3. **Run Prisma migrations**
 
-## Learn More
+   ```bash
+   npx prisma migrate dev
+   ```
 
-To learn more about Next.js, take a look at the following resources:
+4. **Start the development server**
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+   ```bash
+   npm run dev
+   ```
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+   Open [http://localhost:3000](http://localhost:3000).
 
-## Deploy on Vercel
+5. **Build for production**
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+   ```bash
+   npm run build
+   npm start
+   ```
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+## API Integration
+
+The app talks to **Chip-in.asia** using:
+
+- HMAC-SHA512 checksum for auth (`epochSecs + apiKey`)
+- Base URL: `https://api.chip-in.asia/api/`
+- Endpoints used: `send/accounts`, `send/send_instructions`, `send/bank_accounts`, `send/send_limits`, etc.
+- Payin: `https://gate.chip-in.asia/api/v1/purchases/`
+
+## Scripts
+
+| Script | Description |
+|--------|-------------|
+| `npm run dev` | Start dev server |
+| `npm run build` | Build for production |
+| `npm start` | Start production server |
+| `npm run lint` | Run ESLint |
