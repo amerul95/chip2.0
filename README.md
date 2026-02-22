@@ -89,12 +89,12 @@ prisma/
 
 For demo purposes, clients can log in with the following credentials to access the app:
 
-| Field    | Value              |
-|----------|--------------------|
-| **Email**    | `user@nextmail.com` |
-| **Password** | `Senario@123`       |
+| Field      | Value           |
+|-----------|-----------------|
+| **Username** | `read-only`     |
+| **Password** | `Senario@123`   |
 
-Go to `/login` and enter these credentials to access the dashboard.
+Go to `/login` and enter these credentials to access the dashboard. Demo credentials are also shown on the login page.
 
 ## Environment Variables
 

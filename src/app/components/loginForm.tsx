@@ -2,6 +2,7 @@
 
 import { loginUser } from "./../lib/loginUser";
 import { useEffect, useState } from "react";
+import Image from "next/image";
 import Loader from "./ui/loader";
 import { useFormState } from "react-dom";
 
@@ -43,9 +44,27 @@ export  function LoginForm() {
       <section className="bg-gray-900 w-full min-h-screen flex items-center justify-center">
         <div className="w-full max-w-md bg-gray-800 rounded-lg shadow-lg border border-gray-700 px-6 py-8 mx-4 md:mx-auto">
           <div className="space-y-6">
+            <div className="flex justify-center">
+              <Image
+                src="/atom_1.png"
+                alt="App logo"
+                width={64}
+                height={64}
+                className="animate-pulse"
+              />
+            </div>
             <h1 className="text-2xl font-bold leading-tight tracking-tight text-center text-white">
               Sign in
             </h1>
+            <div className="rounded-lg bg-gray-700/50 border border-gray-600 p-4">
+              <p className="text-xs font-semibold text-gray-400 uppercase mb-2">Demo credentials</p>
+              <p className="text-sm text-white">
+                <span className="text-gray-400">Username:</span> <code className="text-green-400">read-only</code>
+              </p>
+              <p className="text-sm text-white mt-1">
+                <span className="text-gray-400">Password:</span> <code className="text-green-400">Senario@123</code>
+              </p>
+            </div>
             <form className="space-y-6" action={formAction}>
               <div>
                 <label
