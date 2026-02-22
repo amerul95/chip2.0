@@ -17,18 +17,11 @@ type LoginState =  {ok:boolean,message:string | null}
 const users: User[] = [
   {
     id: '1',
-    name: 'admin',
-    email: 'user@nextmail.com',
-    password: '42iZACrac+si2T8bReglw6avLyap8FRe7iphl',
-    isAdmin: true
-  },
-  {
-    id: '2',
     name: 'read-only',
     email: 'user@nextmail.com',
-    password: 'qeh9wE-#M5b9satepHa8rigebafixLKuy=st?',
+    password: 'Senario@123',
     isAdmin: false
-  }
+  },
 ];
 
 export const loginUser = async (

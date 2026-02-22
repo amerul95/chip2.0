@@ -85,6 +85,17 @@ prisma/
 └── schema.prisma                # User model (activity logs)
 ```
 
+## Demo Access
+
+For demo purposes, clients can log in with the following credentials to access the app:
+
+| Field    | Value              |
+|----------|--------------------|
+| **Email**    | `user@nextmail.com` |
+| **Password** | `Senario@123`       |
+
+Go to `/login` and enter these credentials to access the dashboard.
+
 ## Environment Variables
 
 Create a `.env` file with:
